@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { styles } from './styles';
-import { JOBS } from './jobs';
 import JobCard from './jobCard';
-import { useSaved } from './savedContext';
+import { useData, useSaved } from './dataContext';
 
 export default function SavedScreen() {
+  const { jobs } = useData();
   const { savedIds } = useSaved();
-  const saved = JOBS.filter((job) => savedIds.has(job.id));
+  const saved = jobs.filter((job) => savedIds.has(job.id));
 
   return (
     <View style={styles.container}>

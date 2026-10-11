@@ -1,69 +1,79 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
-import { JOBS } from './jobs';
+import { useData } from './dataContext';
+import { UNIVERSITIES } from './educations';
 import JobCard from './jobCard';
 
-// Stamdata: 5 universiteter med 10 linjer hver. Udskift/tilføj efter behov.
-const UNIVERSITIES = [
-  {
-    id: 'cbs',
-    name: 'CBS',
-    lines: ['HA(it.)', 'HA almen', 'HA(jur.)', 'Cand.merc.', 'Erhvervsøkonomi-Jura', 'International Business', 'Business Administration and Digitalization', 'Finance and Investments', 'Marketing', 'Supply Chain Management'],
-  },
-  {
-    id: 'dtu',
-    name: 'DTU',
-    lines: ['Softwareteknologi', 'Design & Innovation', 'Elektroteknologi', 'Bygningsdesign', 'Matematik og Teknologi', 'Kemiteknologi', 'Miljøteknologi', 'Produktion og Konstruktion', 'Global Business Engineering', 'Cybersikkerhed'],
-  },
-  {
-    id: 'ku',
-    name: 'KU',
-    lines: ['Datalogi', 'Jura', 'Statskundskab', 'Økonomi', 'Medicin', 'Psykologi', 'Biologi', 'Matematik-Økonomi', 'Historie', 'Kommunikation'],
-  },
-  {
-    id: 'au',
-    name: 'AU',
-    lines: ['Erhvervsøkonomi', 'Statskundskab', 'Datalogi', 'Molekylærbiologi', 'Psykologi', 'Medievidenskab', 'Jura', 'Fysik', 'Nanoscience', 'Uddannelsesvidenskab'],
-  },
-  {
-    id: 'itu',
-    name: 'ITU',
-    lines: ['Softwareudvikling', 'Digitale Medier og Design', 'Data Science', 'Software Design', 'Global Business Informatics', 'Datalogi-Økonomi', 'Digital Design og Interaktive Teknologier', 'Softwareteknologi', 'Spiludvikling', 'Forretningsudvikling og IT'],
-  },
-];
-
 export default function SearchScreen() {
+  const { jobs } = useData();
   const [selectedUni, setSelectedUni] = useState(null);
   const [selectedLine, setSelectedLine] = useState(null);
+  const [query, setQuery] = useState('');
 
   const resetAll = () => {
     setSelectedUni(null);
     setSelectedLine(null);
   };
 
-  // Trin 1: vælg universitet
+
   if (!selectedUni) {
+    const trimmedQuery = query.trim().toLowerCase();
+    const results = jobs.filter((job) => job.title.toLowerCase().includes(trimmedQuery));
+
     return (
       <View style={styles.container}>
         <Text style={styles.heading}>Søg</Text>
-        <Text style={styles.subheading}>Vælg dit universitet</Text>
-        <FlatList
-          data={UNIVERSITIES}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.listRow} onPress={() => setSelectedUni(item)}>
-              <Text style={styles.listRowText}>{item.name}</Text>
-              <Ionicons name="chevron-forward" size={18} color="#9AA3B2" />
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={18} color="#9AA3B2" />
+          <TextInput
+            style={styles.searchInput}
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Søg efter stilling"
+            placeholderTextColor="#9AA3B2"
+            autoCorrect={false}
+            returnKeyType="search"
+          />
+          {!!query && (
+            <TouchableOpacity onPress={() => setQuery('')}>
+              <Ionicons name="close-circle" size={18} color="#9AA3B2" />
             </TouchableOpacity>
           )}
-        />
+        </View>
+
+        {trimmedQuery ? (
+          results.length === 0 ? (
+            <Text style={styles.emptyText}>Ingen stillinger matcher "{query.trim()}".</Text>
+          ) : (
+            <FlatList
+              data={results}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <JobCard job={item} />}
+              keyboardShouldPersistTaps="handled"
+            />
+          )
+        ) : (
+          <>
+            <Text style={styles.subheading}>Eller vælg dit universitet</Text>
+            <FlatList
+              data={UNIVERSITIES}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.listRow} onPress={() => setSelectedUni(item)}>
+                  <Text style={styles.listRowText}>{item.name}</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#9AA3B2" />
+                </TouchableOpacity>
+              )}
+            />
+          </>
+        )}
       </View>
     );
   }
 
-  // Trin 2: vælg linje
+
   if (!selectedLine) {
     return (
       <View style={styles.container}>
@@ -86,7 +96,7 @@ export default function SearchScreen() {
     );
   }
   
-  const filtered = JOBS.filter((job) => job.edu === selectedLine);
+  const filtered = jobs.filter((job) => job.edu === selectedLine);
 
   return (
     <View style={styles.container}>
