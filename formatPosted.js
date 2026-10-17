@@ -1,6 +1,5 @@
 const DAY = 24 * 60 * 60 * 1000;
-
-// Gør et tidsstempel til tekst som "3 dage siden".
+// viser hvor mange dage siden et opslag er opetter
 export function formatPosted(createdAt) {
   const days = Math.floor((Date.now() - createdAt) / DAY);
   if (days <= 0) return 'I dag';

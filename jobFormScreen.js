@@ -3,10 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-nativ
 import { styles } from './styles';
 import { useData } from './dataContext';
 import EducationPicker, { Chip } from './educationPicker';
-
+// her oprettes og redigeres jobopslag. kan kun tilgås af virksomheder
 const JOB_TYPES = ['Praktik', 'Studiejob', 'Fuldtid', 'Deltid'];
 
-// Opret nyt opslag, eller rediger/slet et eksisterende hvis route.params.jobId er sat.
 export default function JobFormScreen({ navigation, route }) {
   const { jobs, currentUser, createJob, updateJob, deleteJob } = useData();
   const existing = jobs.find((j) => j.id === route.params?.jobId);
@@ -50,7 +49,7 @@ export default function JobFormScreen({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={styles.formContainer} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+    <ScrollView style={styles.formContainer} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
       <Text style={styles.label}>Titel *</Text>
       <TextInput style={styles.input} value={form.title} onChangeText={(title) => set({ title })} />
 

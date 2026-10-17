@@ -4,7 +4,7 @@ import * as db from './database';
 export const ROLES = db.ROLES;
 
 const DataContext = createContext(null);
-
+//funktion herunder h¨ndtere alt data og funktioner til at opdatere data
 export function DataProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,7 +27,6 @@ export function DataProvider({ children }) {
 
   const currentUser = users.find((u) => u.id === currentUserId) ?? null;
 
-  // Virksomhedsnavnet slås op på virksomhedsbrugeren, så et navneskift slår igennem på alle opslag.
   const jobs = useMemo(() => {
     const names = Object.fromEntries(users.map((u) => [u.id, u.name]));
     return rawJobs
@@ -49,7 +48,6 @@ export function DataProvider({ children }) {
       setCurrentUserId(null);
     },
 
-    // Opretter brugeren og logger den ind.
     createUser: async (data) => {
       const { userId, users: next } = await db.createUser(data);
       setUsers(next);

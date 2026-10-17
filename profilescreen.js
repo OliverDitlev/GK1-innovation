@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './styles';
 import { useData, ROLES } from './dataContext';
-
+// viser profil information for den nuværende bruger
 export const ROLE_LABELS = {
   [ROLES.JOBSEEKER]: 'Jobsøgende',
   [ROLES.COMPANY]: 'Virksomhed',
@@ -19,17 +19,7 @@ function InfoRow({ label, value }) {
 }
 
 export default function ProfileScreen({ navigation }) {
-  const { currentUser, logout, resetDatabase } = useData();
-  const [confirmReset, setConfirmReset] = useState(false);
-
-  const handleReset = async () => {
-    if (!confirmReset) {
-      setConfirmReset(true);
-      return;
-    }
-    setConfirmReset(false);
-    await resetDatabase();
-  };
+  const { currentUser, logout } = useData();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
@@ -59,12 +49,6 @@ export default function ProfileScreen({ navigation }) {
 
       <TouchableOpacity style={styles.secondaryButton} onPress={logout}>
         <Text style={styles.secondaryButtonText}>Log ud</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.secondaryButton} onPress={handleReset}>
-        <Text style={styles.secondaryButtonText}>
-          {confirmReset ? 'Tryk igen for at nulstille alt' : 'Nulstil database'}
-        </Text>
       </TouchableOpacity>
     </ScrollView>
   );

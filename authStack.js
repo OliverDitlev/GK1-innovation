@@ -4,8 +4,7 @@ import LoginScreen from './loginScreen';
 import ProfileFormScreen from './profileFormScreen';
 
 const Stack = createNativeStackNavigator();
-
-// Vises når ingen er logget ind.
+// AuthStack håndterer navigationen mellem login og oprettelse af bruger
 export default function AuthStack() {
   return (
     <Stack.Navigator>

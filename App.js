@@ -13,8 +13,7 @@ import MyJobsStack from './myJobsStack';
 import AuthStack from './authStack';
 
 const Tab = createBottomTabNavigator();
-
-// Ikonnavne matcher Ionicons-biblioteket
+// Definerer ikonerne for hver fane
 const ICONS = {
   Hjem: 'home',
   Gemte: 'heart',
@@ -22,7 +21,7 @@ const ICONS = {
   'Mine opslag': 'briefcase',
   Profil: 'person',
 };
-
+//her håndtere login satus og mulig navigation baseret på rolle
 function AppTabs() {
   const { loading, error, currentUser } = useData();
 

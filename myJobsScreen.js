@@ -3,8 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { useData } from './dataContext';
 import JobCard from './jobCard';
-
-// Virksomhedens egne opslag.
+// viser en liste over alle jobopslag som den nuværende bruger har oprettet
 export default function MyJobsScreen({ navigation }) {
   const { jobs, currentUser } = useData();
   const myJobs = jobs.filter((job) => job.companyId === currentUser?.id);

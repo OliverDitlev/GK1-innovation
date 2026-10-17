@@ -4,7 +4,7 @@ import ProfileScreen from './profilescreen';
 import ProfileFormScreen from './profileFormScreen';
 
 const Stack = createNativeStackNavigator();
-
+//håndter navigationen mellem profilvisning og redigering af profil
 export default function ProfileStack() {
   return (
     <Stack.Navigator>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from './styles';
 import { useData } from './dataContext';
-
+// login side, hvor brugere kan logge ind med deres e-mail og adgangskode
 export default function LoginScreen({ navigation }) {
   const { login } = useData();
   const [email, setEmail] = useState('');
@@ -51,7 +51,7 @@ export default function LoginScreen({ navigation }) {
         textContentType="password"
         onSubmitEditing={handleLogin}
       />
-
+// hardcodet demo login, som kan bruges til at logge ind uden at oprette en bruger
       {!!error && <Text style={styles.errorText}>{error}</Text>}
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={busy}>
@@ -62,7 +62,6 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.secondaryButtonText}>Opret ny bruger</Text>
       </TouchableOpacity>
 
-      {/* Midlertidigt: demo-brugere fra seedData.js */}
       <Text style={styles.authHint}>
         Demo: demo@jobify.dk (jobsøgende) eller maersk@jobify.dk (virksomhed) — adgangskode demo1234
       </Text>

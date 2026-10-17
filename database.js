@@ -2,16 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import { buildSeedData, DEMO_PASSWORD } from './seedData';
 
-// Lokal database oven på AsyncStorage.
-// Hver "tabel" gemmes som et JSON-array under sin egen nøgle.
-// Alle skrivefunktioner returnerer de opdaterede data, så context'en kan sætte state direkte.
-// Fejl der skal vises for brugeren kastes som Error med en dansk besked.
-
 export const ROLES = {
   JOBSEEKER: 'jobseeker',
   COMPANY: 'company',
 };
-
+// keys er de nøgler, der bruges til at gemme data i AsyncStorage. 
 const KEYS = {
   users: '@jobify/users',
   jobs: '@jobify/jobs',
@@ -19,11 +14,10 @@ const KEYS = {
   seeded: '@jobify/seeded',
 };
 
-// Hæves når datastrukturen ændres, så gamle data på telefonen erstattes af nye startdata.
 const SEED_VERSION = '2';
 
 const MIN_PASSWORD_LENGTH = 6;
-
+//herunder er funktion til at håndtere alt database i async storage
 async function read(key, fallback) {
   const raw = await AsyncStorage.getItem(key);
   return raw == null ? fallback : JSON.parse(raw);
@@ -37,8 +31,6 @@ function createId(prefix) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-// ---------- Adgangskoder ----------
-
 async function hashPassword(password, salt) {
   return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${salt}:${password}`);
 }
@@ -48,14 +40,11 @@ async function createCredentials(password) {
   return { passwordSalt, passwordHash: await hashPassword(password, passwordSalt) };
 }
 
-// Adgangskode-felterne må aldrig forlade databasen.
 function withoutCredentials({ passwordHash, passwordSalt, ...user }) {
   return user;
 }
 
 const normalizeEmail = (email) => email.trim().toLowerCase();
-
-// ---------- Opstart ----------
 
 async function seed() {
   const { users, jobs } = buildSeedData();
@@ -70,7 +59,6 @@ async function seed() {
   ]);
 }
 
-// Læser hele databasen. Første gang (eller ved ny SEED_VERSION) fyldes den med startdata.
 export async function loadDatabase() {
   if ((await AsyncStorage.getItem(KEYS.seeded)) !== SEED_VERSION) {
     await seed();
@@ -83,13 +71,10 @@ export async function loadDatabase() {
   return { users: users.map(withoutCredentials), jobs, currentUserId };
 }
 
-// Sletter alt og lægger startdata ind igen.
 export async function resetDatabase() {
   await AsyncStorage.multiRemove(Object.values(KEYS));
   return loadDatabase();
 }
-
-// ---------- Login ----------
 
 export async function login(email, password) {
   const users = await read(KEYS.users, []);
@@ -105,8 +90,6 @@ export async function logout() {
   await write(KEYS.currentUserId, null);
 }
 
-// ---------- Brugere ----------
-
 const USER_DEFAULTS = {
   [ROLES.JOBSEEKER]: { email: '', university: '', education: '', about: '', savedJobIds: [] },
   [ROLES.COMPANY]: { email: '', location: '', about: '' },
@@ -118,7 +101,6 @@ function assertEmailFree(users, email, ownId) {
   }
 }
 
-// Opretter en bruger og logger den ind.
 export async function createUser({ role, password, ...data }) {
   if (!password || password.length < MIN_PASSWORD_LENGTH) {
     throw new Error(`Adgangskoden skal være mindst ${MIN_PASSWORD_LENGTH} tegn.`);
@@ -166,8 +148,6 @@ export async function toggleSavedJob(userId, jobId) {
   return next.map(withoutCredentials);
 }
 
-// ---------- Jobopslag ----------
-
 export async function createJob(companyId, data) {
   const jobs = await read(KEYS.jobs, []);
   const job = { ...data, companyId, id: createId('job'), createdAt: Date.now() };
@@ -183,7 +163,6 @@ export async function updateJob(id, changes) {
   return next;
 }
 
-// Sletter opslaget og fjerner det fra alle jobsøgendes gemte liste.
 export async function deleteJob(id) {
   const [jobs, users] = await Promise.all([read(KEYS.jobs, []), read(KEYS.users, [])]);
   const nextJobs = jobs.filter((j) => j.id !== id);

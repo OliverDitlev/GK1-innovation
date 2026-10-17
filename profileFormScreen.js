@@ -4,10 +4,9 @@ import { styles } from './styles';
 import { useData, ROLES } from './dataContext';
 import EducationPicker, { Chip } from './educationPicker';
 import { ROLE_LABELS } from './profilescreen';
-
+// side hvor brugere kan oprette og redigere deres profil
 const EMPTY = { name: '', email: '', about: '', university: '', education: '', location: '', password: '', passwordRepeat: '' };
 
-// Bruges både til "Opret ny bruger" (mode = 'create', fra login) og "Rediger profil".
 export default function ProfileFormScreen({ navigation, route }) {
   const isCreate = route.params?.mode === 'create';
   const { currentUser, createUser, updateCurrentUser } = useData();
@@ -39,7 +38,6 @@ export default function ProfileFormScreen({ navigation, route }) {
 
     try {
       if (isCreate) {
-        // Brugeren logges ind, og App skifter selv til fanerne.
         await createUser({ role, password: form.password, ...data });
       } else {
         await updateCurrentUser(data);
@@ -51,7 +49,7 @@ export default function ProfileFormScreen({ navigation, route }) {
   };
 
   return (
-    <ScrollView style={styles.formContainer} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+    <ScrollView style={styles.formContainer} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
       {isCreate && (
         <>
           <Text style={styles.label}>Brugertype</Text>

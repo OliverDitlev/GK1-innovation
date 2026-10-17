@@ -4,7 +4,7 @@ import MyJobsScreen from './myJobsScreen';
 import JobFormScreen from './jobFormScreen';
 
 const Stack = createNativeStackNavigator();
-
+// MyJobsStack håndterer navigationen mellem mine jobopslag og oprettelse/redigering af jobopslag
 export default function MyJobsStack() {
   return (
     <Stack.Navigator>

@@ -6,7 +6,7 @@ import JobCard from './jobCard';
 
 export default function HomeScreen({ navigation }) {
   const { jobs } = useData();
-
+// viser homescreen med alle jobopslag
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Jobify</Text>

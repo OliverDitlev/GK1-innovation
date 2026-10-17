@@ -1,5 +1,4 @@
-// Stamdata: 5 universiteter med 10 linjer hver.
-// Bruges både til søgning og når opslag/profiler oprettes, så felterne matcher.
+// hardcodet uddanelser. gemmes ikke i databasen da disse ikke ændre sig
 export const UNIVERSITIES = [
   {
     id: 'cbs',

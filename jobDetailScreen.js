@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 import { styles } from './styles';
 import { useData } from './dataContext';
 import { formatPosted } from './formatPosted';
-
+// viser detaljer for hvert job
 export default function JobDetailScreen({ route }) {
   const { jobs } = useData();
   const job = jobs.find((j) => j.id === route.params.jobId);

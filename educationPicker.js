@@ -10,8 +10,7 @@ function Chip({ label, active, onPress }) {
     </TouchableOpacity>
   );
 }
-
-// Vælg universitet og derefter linje. onChange får { university, education }.
+// er side hvor der vælges uddannelse og universitet, som bruges i oprettelse af bruger
 export default function EducationPicker({ university, education, onChange }) {
   const uni = UNIVERSITIES.find((u) => u.name === university);
 

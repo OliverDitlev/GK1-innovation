@@ -1,11 +1,7 @@
-// Startdata der skrives ind i databasen første gang appen åbnes.
-// Bruges kun af database.js — skærmene læser altid fra databasen.
-// Alle demo-brugere har adgangskoden DEMO_PASSWORD (den hashes før den gemmes).
-
 export const DEMO_PASSWORD = 'demo1234';
 
 const DAY = 24 * 60 * 60 * 1000;
-
+// indeholder alt stamdata for app ikke er helt tom
 const COMPANIES = [
   { id: 'company-maersk', name: 'Maersk Technology', location: 'København' },
   { id: 'company-lunar', name: 'Lunar Bank', location: 'Aarhus' },

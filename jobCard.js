@@ -10,7 +10,7 @@ export default function JobCard({ job, onPress }) {
   const { savedIds, toggleSave } = useSaved();
   const saved = savedIds.has(job.id);
   const canSave = currentUser?.role === ROLES.JOBSEEKER;
-
+// side med et jobopslag
   return (
     <TouchableOpacity style={styles.jobCard} onPress={onPress} disabled={!onPress} activeOpacity={onPress ? 0.7 : 1}>
       {job.image ? (
