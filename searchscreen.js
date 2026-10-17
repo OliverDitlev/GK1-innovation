@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
@@ -6,21 +6,39 @@ import { useData } from './dataContext';
 import { UNIVERSITIES } from './educations';
 import JobCard from './jobCard';
 
-export default function SearchScreen() {
+const SEARCH_FIELDS = ['title', 'company', 'location', 'edu', 'type', 'duration', 'desc'];
+
+// et job matcher, hvis hvert ord i søgningen findes i mindst ét af felterne
+function matchesQuery(job, words) {
+  const haystack = SEARCH_FIELDS.map((field) => job[field] ?? '').join(' ').toLowerCase();
+  return words.every((word) => haystack.includes(word));
+}
+
+export default function SearchScreen({ navigation }) {
   const { jobs } = useData();
   const [selectedUni, setSelectedUni] = useState(null);
   const [selectedLine, setSelectedLine] = useState(null);
   const [query, setQuery] = useState('');
+  const [selectedType, setSelectedType] = useState(null);
 
   const resetAll = () => {
     setSelectedUni(null);
     setSelectedLine(null);
   };
 
+  const openJob = (job) => navigation.navigate('JobDetail', { jobId: job.id });
+
+  const renderJob = ({ item }) => <JobCard job={item} onPress={() => openJob(item)} />;
+
+  // jobtyper hentes fra de eksisterende opslag, så der kun vises filtre med resultater
+  const jobTypes = useMemo(() => [...new Set(jobs.map((job) => job.type).filter(Boolean))], [jobs]);
 
   if (!selectedUni) {
-    const trimmedQuery = query.trim().toLowerCase();
-    const results = jobs.filter((job) => job.title.toLowerCase().includes(trimmedQuery));
+    const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const isSearching = words.length > 0 || !!selectedType;
+    const results = jobs.filter(
+      (job) => (!selectedType || job.type === selectedType) && matchesQuery(job, words)
+    );
 
     return (
       <View style={styles.container}>
@@ -31,7 +49,7 @@ export default function SearchScreen() {
             style={styles.searchInput}
             value={query}
             onChangeText={setQuery}
-            placeholder="Søg efter stilling"
+            placeholder="Stilling, virksomhed, by eller uddannelse"
             placeholderTextColor="#9AA3B2"
             autoCorrect={false}
             returnKeyType="search"
@@ -43,16 +61,37 @@ export default function SearchScreen() {
           )}
         </View>
 
-        {trimmedQuery ? (
+        <View style={styles.chipRow}>
+          {jobTypes.map((type) => {
+            const active = selectedType === type;
+            return (
+              <TouchableOpacity
+                key={type}
+                style={active ? styles.chipActive : styles.chip}
+                onPress={() => setSelectedType(active ? null : type)}
+              >
+                <Text style={active ? styles.chipTextActive : styles.chipText}>{type}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {isSearching ? (
           results.length === 0 ? (
-            <Text style={styles.emptyText}>Ingen stillinger matcher "{query.trim()}".</Text>
+            <Text style={styles.emptyText}>Ingen jobs matcher din søgning.</Text>
           ) : (
-            <FlatList
-              data={results}
-              keyExtractor={(item) => String(item.id)}
-              renderItem={({ item }) => <JobCard job={item} />}
-              keyboardShouldPersistTaps="handled"
-            />
+            <>
+              <Text style={styles.subheading}>
+                {results.length} {results.length === 1 ? 'resultat' : 'resultater'}
+              </Text>
+              <FlatList
+                data={results}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={renderJob}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag"
+              />
+            </>
           )
         ) : (
           <>
@@ -95,7 +134,7 @@ export default function SearchScreen() {
       </View>
     );
   }
-  
+
   const filtered = jobs.filter((job) => job.edu === selectedLine);
 
   return (
@@ -118,7 +157,7 @@ export default function SearchScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <JobCard job={item} />}
+          renderItem={renderJob}
         />
       )}
     </View>

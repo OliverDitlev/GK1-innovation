@@ -7,7 +7,7 @@ import { DataProvider, useData, ROLES } from './dataContext';
 import { styles } from './styles';
 import HomeStack from './homestack';
 import SavedScreen from './savedScreen';
-import SearchScreen from './searchscreen';
+import SearchStack from './searchStack';
 import ProfileStack from './profileStack';
 import MyJobsStack from './myJobsStack';
 import AuthStack from './authStack';
@@ -63,11 +63,9 @@ function AppTabs() {
       {isCompany ? (
         <Tab.Screen name="Mine opslag" component={MyJobsStack} />
       ) : (
-        <>
-          <Tab.Screen name="Gemte" component={SavedScreen} />
-          <Tab.Screen name="Søg" component={SearchScreen} />
-        </>
+        <Tab.Screen name="Gemte" component={SavedScreen} />
       )}
+      <Tab.Screen name="Søg" component={SearchStack} />
       <Tab.Screen name="Profil" component={ProfileStack} />
     </Tab.Navigator>
   );
